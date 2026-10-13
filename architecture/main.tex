@@ -1,0 +1,105 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,landscape,margin=1.4cm]{geometry}
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\pagestyle{empty}
+
+\begin{document}
+\begin{center}
+    {\LARGE\bfseries Архитектура решателя уравнений}
+\end{center}
+\vspace{-0.25cm}
+
+\begin{center}
+\begin{tikzpicture}[
+    class/.style={
+        draw=blue!45!black,
+        fill=blue!3,
+        rounded corners=2pt,
+        line width=0.7pt,
+        align=left,
+        font=\footnotesize,
+        text width=7.6cm,
+        inner sep=8pt
+    },
+    abstract/.style={fill=blue!8},
+    collection/.style={fill=teal!5},
+    inheritance/.style={-{Triangle[open, length=3mm, width=3mm]}, line width=0.8pt},
+    dependency/.style={dashed, -{Stealth[length=2mm]}, line width=0.8pt}
+]
+    \node[class] (complex) at (-10.7, 3.9) {
+        \textbf{Complex (immutable)}\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        - real: double\\
+        - imag: double\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        + operator+(rhs: Complex): Complex\\
+        + operator-(rhs: Complex): Complex\\
+        + operator*(rhs: Complex): Complex\\
+        + operator/(rhs: Complex): Complex\\
+        + operator==(rhs: Complex): bool\\
+        + operator!=(rhs: Complex): bool
+    };
+
+    \node[class, abstract] (equation) at (0, 3.9) {
+        \textbf{Equation} \textit{(abstract)}\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        + operator()(x: Complex): Complex\\
+        + solve(): vector<Complex>
+    };
+
+    \node[class] (linear) at (-4.7, -1.2) {
+        \textbf{LinearEquation}\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        - a: Complex\\
+        - b: Complex\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        + LinearEquation(a, b) {\(a \ne 0\)}\\
+        + operator()(x: Complex): Complex\\
+        + solve(): vector<Complex>
+    };
+
+    \node[class] (quadratic) at (4.7, -1.2) {
+        \textbf{QuadraticEquation}\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        - a: Complex\\
+        - b: Complex\\
+        - c: Complex\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        + QuadraticEquation(a, b, c) {\(a \ne 0\)}\\
+        + operator()(x: Complex): Complex\\
+        + solve(): vector<Complex>
+    };
+
+    \node[class, collection] (collection) at (0, -6.0) {
+        \textbf{EquationCollection}\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        - equations: owned Equation objects\\[2pt]
+        \rule{7.3cm}{0.4pt}\\
+        + add(equation): void\\
+        + solveAll()\\
+        + evaluateAll(x: Complex)\\
+        + findByRoot(x: Complex)
+    };
+
+    % Наследование: пустой треугольник указывает на базовый класс.
+    \draw[inheritance] (linear.north east) -- (equation.south west);
+    \draw[inheritance] (quadratic.north west) -- (equation.south east);
+
+    % Equation использует Complex для аргумента и результата вычисления.
+    \draw[dependency] (equation.west) -- node[above, fill=white, inner sep=1pt] {использует} (complex.east);
+
+    % Коллекция владеет нулём или несколькими объектами Equation.
+    \draw[{Diamond[length=3mm, width=3mm]}-] (collection.north) --
+        node[pos=0.08, right, fill=white, inner sep=1pt] {1}
+        node[pos=0.92, right, fill=white, inner sep=1pt] {0..*}
+        (equation.south);
+\end{tikzpicture}
+\end{center}
+
+\end{document}
