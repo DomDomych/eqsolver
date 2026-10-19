@@ -57,8 +57,8 @@ bool Complex::operator!=(const Complex& other) const {
 Complex Complex::sqrt() const
 {
     const double hypot = std::hypot(re_,im_);
-    const double real = std::sqrt(hypot+re_)/2.0;
-    const double imag = std::sqrt(hypot+im_)/2.0;
+    const double real = std::sqrt((hypot+re_)/2.0);
+    const double imag = std::sqrt((hypot+im_)/2.0);
 
     return Complex(real,im_<0? -imag:imag);
 }
