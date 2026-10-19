@@ -16,7 +16,8 @@ class Complex
         Complex operator-(const Complex& other) const;
         Complex operator*(const Complex& other) const;
         Complex operator/(const Complex& other) const;
-
+        Complex operator-() const;
+        
         bool operator==(const Complex& other) const;
         bool operator!=(const Complex& other) const;
 };
