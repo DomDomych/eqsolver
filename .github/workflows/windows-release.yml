@@ -1,6 +1,13 @@
 name: Windows release
 
 on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to build
+        required: true
+        default: v0.1.0
+        type: string
   push:
     tags:
       - 'v*'
@@ -17,6 +24,8 @@ jobs:
         shell: pwsh
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Configure
         run: cmake -S . -B build -A x64 -DBUILD_TESTING=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_DISABLE_FIND_PACKAGE_GTest=ON
@@ -44,6 +53,6 @@ jobs:
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           gh release create "$env:RELEASE_TAG" eqsolver-windows-x64.zip --verify-tag --title "Equation solver $env:RELEASE_TAG" --notes "Windows x64: unzip the archive, then run run.cmd for the application or tests.cmd for all tests. No compiler or GoogleTest installation is required."
