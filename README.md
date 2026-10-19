@@ -21,6 +21,20 @@ cmake --build build --config Release
 На Windows при сборке через Visual Studio: `.\build\Release\eqsolver.exe`.
 При использовании MinGW: `.\build\eqsolver.exe`.
 
+## Скрипты для Linux
+
+```sh
+./scripts/build.sh         # Сборка Debug
+./scripts/build.sh Release # Сборка Release
+./scripts/run.sh           # Сборка и запуск
+./scripts/test.sh          # Сборка и запуск тестов через CTest
+./scripts/format.sh        # Форматирование C++ файлов (нужен clang-format)
+```
+
+Скрипты сборки, запуска и тестирования принимают `Debug` или `Release`.
+Сборки сохраняются в `build/Debug` и `build/Release`.
+Тесты пока не добавлены: `test.sh` сообщает об этом и завершается с ошибкой.
+
 ## Структура
 
 - `core/` — комплексные числа, уравнения и коллекция.
