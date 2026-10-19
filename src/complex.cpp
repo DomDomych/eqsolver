@@ -1,5 +1,6 @@
 #include "complex.hpp"
 #include <stdexcept>
+#include <cmath>
 
 Complex::Complex(double real, double imag)
     : re_(real), im_(imag) {}
@@ -51,4 +52,13 @@ bool Complex::operator==(const Complex& other) const {
 
 bool Complex::operator!=(const Complex& other) const {
     return !(*this == other);
+}
+
+Complex Complex::sqrt() const
+{
+    const double hypot = std::hypot(re_,im_);
+    const double real = std::sqrt(hypot+re_)/2.0;
+    const double imag = std::sqrt(hypot+im_)/2.0;
+
+    return Complex(real,im_<0? -imag:imag);
 }
