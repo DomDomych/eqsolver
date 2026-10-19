@@ -1,0 +1,49 @@
+name: Windows release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -A x64 -DBUILD_TESTING=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_DISABLE_FIND_PACKAGE_GTest=ON
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure --no-tests=error
+
+      - name: Smoke test CLI
+        run: |
+          $output = "0" | & .\build\Release\eqsolver.exe
+          if ($LASTEXITCODE -ne 0 -or ($output -join "`n") -notmatch 'Equation solver') {
+            throw 'CLI startup check failed'
+          }
+
+      - name: Package
+        run: |
+          New-Item -ItemType Directory -Path package | Out-Null
+          Copy-Item build/Release/eqsolver.exe, build/Release/eqsolver_tests.exe package/
+          Copy-Item scripts/windows/run.cmd, scripts/windows/tests.cmd, README.md package/
+          Compress-Archive -Path package/* -DestinationPath eqsolver-windows-x64.zip
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$env:RELEASE_TAG" eqsolver-windows-x64.zip --verify-tag --title "Equation solver $env:RELEASE_TAG" --notes "Windows x64: unzip the archive, then run run.cmd for the application or tests.cmd for all tests. No compiler or GoogleTest installation is required."
