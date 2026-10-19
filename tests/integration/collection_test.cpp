@@ -24,14 +24,14 @@ TEST(CollectionIntegrationTest, SolvesMixedEquationsInInsertionOrder) {
     EXPECT_NEAR(results[0][0].imag(), 0, 1e-10);
 
     ASSERT_EQ(results[1].size(), 2u);
-    std::sort(results[1].begin(), results[1].end(),
+    const auto [negative, positive] = std::minmax_element(results[1].begin(), results[1].end(),
               [](const Complex& left, const Complex& right) {
                   return left.imag() < right.imag();
               });
-    EXPECT_NEAR(results[1][0].real(), 0, 1e-10);
-    EXPECT_NEAR(results[1][0].imag(), -1, 1e-10);
-    EXPECT_NEAR(results[1][1].real(), 0, 1e-10);
-    EXPECT_NEAR(results[1][1].imag(), 1, 1e-10);
+    EXPECT_NEAR(negative->real(), 0, 1e-10);
+    EXPECT_NEAR(negative->imag(), -1, 1e-10);
+    EXPECT_NEAR(positive->real(), 0, 1e-10);
+    EXPECT_NEAR(positive->imag(), 1, 1e-10);
 
     ASSERT_EQ(results[2].size(), 1u);
     EXPECT_NEAR(results[2][0].real(), 2, 1e-10);

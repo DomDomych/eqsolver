@@ -2,6 +2,12 @@
 #include <gtest/gtest.h>
 
 #include <stdexcept>
+#include <type_traits>
+
+static_assert(std::is_copy_constructible_v<Complex>);
+static_assert(std::is_move_constructible_v<Complex>);
+static_assert(!std::is_copy_assignable_v<Complex>);
+static_assert(!std::is_move_assignable_v<Complex>);
 
 TEST(ComplexTest, StoresRealAndImaginaryParts) {
     const Complex value(2.5, -3);

@@ -4,11 +4,16 @@
 class Complex
 {
     private:
-        double re_=0;
-        double im_=0;
+        const double re_;
+        const double im_;
 
     public:
         Complex(double real,double imag);
+
+        Complex(const Complex&) = default;
+        Complex(Complex&&) = default;
+        Complex& operator=(const Complex&) = delete;
+        Complex& operator=(Complex&&) = delete;
 
         double real() const;
         double imag() const;
